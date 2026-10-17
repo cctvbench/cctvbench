@@ -9,6 +9,7 @@
     "node": ">=22.22.0"
   },
   "scripts": {
+    "prepare": "if [ -f scripts/install-git-hooks.sh ]; then sh scripts/install-git-hooks.sh; fi",
     "dev": "astro dev",
     "build": "astro build",
     "build:staging": "astro build --mode staging --outDir dist-staging",

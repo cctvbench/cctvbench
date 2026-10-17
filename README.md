@@ -45,6 +45,6 @@ Bug reports and feature requests: GitHub Issues.
 
 Code is released under the [MIT License](LICENSE).
 
-CCTVBench, the CCTVBench logo and "Developed by Aegiron" are trademarks of Aegiron 旭璿實業 and are not covered by the MIT License. Hikvision, HiLook, Dahua, Uniview, Axis and other vendor names belong to their respective owners and are used only to describe compatibility.
+CCTVBench, the CCTVBench logo and Aegiron are trademarks of Galaxy World Industrial Co., Ltd. (旭璿實業有限公司), trading as Aegiron, and are not covered by the MIT License. Hikvision, HiLook, Dahua, Uniview, Axis and other vendor names belong to their respective owners and are used only to describe compatibility.
 
 Developed by [Aegiron](https://aegiron.com.tw).

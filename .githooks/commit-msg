@@ -1,0 +1,42 @@
+#!/bin/sh
+# Enforces the commit message format from CLAUDE.md:
+#   <type>[(scope)][!]: #<issue> <subject>      e.g. feat: #12 add the bandwidth calculator
+#   subject line <= 72 chars, body 0-3 lines, no trailers (Co-Authored-By, Signed-off-by, ...)
+# Plain sh with no node so it also fires from GUI clients that do not inherit an nvm PATH.
+# Installed by `pnpm install` through scripts/install-git-hooks.sh (core.hooksPath = .githooks).
+# Bypass in an emergency with `git commit --no-verify`.
+
+set -e
+
+types='build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test'
+pattern="^($types)(\([a-z0-9./-]+\))?!?: #[0-9]+ .+"
+
+# Strip git comment lines; the first non-blank line is the subject.
+content=$(grep -v '^#' "$1")
+subject=$(printf '%s\n' "$content" | sed -n '/[^[:space:]]/{p;q;}')
+
+# Messages git generates itself, plus autosquash markers.
+case "$subject" in
+  'Merge '* | 'Revert '* | 'fixup! '* | 'squash! '* | 'amend! '*) exit 0 ;;
+esac
+
+fail() {
+  echo "✗ $1" >&2
+  echo "  got:      ${subject:-<empty>}" >&2
+  echo "  required: <type>: #<issue> <subject>   then a blank line and 0-3 body lines" >&2
+  echo "  example:  feat: #12 add the bandwidth calculator" >&2
+  echo "  types:    build chore ci docs feat fix perf refactor revert style test (optional (scope) and !)" >&2
+  echo "  Your message is kept — reuse it with: git commit -e -F \"\$(git rev-parse --git-path COMMIT_EDITMSG)\"" >&2
+  exit 1
+}
+
+printf '%s\n' "$subject" | grep -Eq "$pattern" || fail "Commit subject is missing an issue reference (#<n>) or has the wrong shape."
+
+[ "$(printf '%s' "$subject" | wc -c | tr -d ' ')" -le 72 ] || fail "Commit subject is longer than 72 characters."
+
+# Body = every non-blank line after the subject (the first non-blank line).
+body=$(printf '%s\n' "$content" | awk 'NF && !seen { seen = 1; next } seen && NF { print }')
+body_lines=$(printf '%s' "$body" | grep -c . || true)
+[ "${body_lines:-0}" -le 3 ] || fail "Commit body has $body_lines lines; the limit is 3. Split the commit."
+
+printf '%s\n' "$body" | grep -Eiq '^(co-authored-by|signed-off-by|reviewed-by|acked-by):' && fail "Trailers are not used in this repo." || true

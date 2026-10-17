@@ -6,7 +6,8 @@ export default defineConfig({
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
   test: {
-    include: ['src/**/*.test.ts'],
+    // Repo tooling outside src (git hooks) is tested too
+    include: ['src/**/*.test.ts', '.githooks/**/*.test.ts'],
     passWithNoTests: true,
   },
 });

@@ -2,14 +2,13 @@
 
 Requirements and scope: [docs/requirements.md](docs/requirements.md). Read it before proposing features.
 
-## First principle
+## Working style
 
-KISS. Keep code and requirements simple; do not add complexity without a reason.
-
-When a new requirement comes in, always ask before building:
-1. Does it conflict with an existing requirement?
-2. Does it have real value for an installer?
-3. Which details are still unclear?
+1. KISS. Write only what is needed now; one function beats a layer. This applies to code, requirements and documents alike
+2. One small step at a time, scoped to what was asked. Say in a sentence what you are about to do; afterwards say what you did and how you verified it
+3. Before starting a new requirement, ask three questions: does it conflict with an existing requirement, does it have real value for an installer, and which details are still unclear?
+4. **Never commit or push unless explicitly asked.** After changes, list staged, unstaged and untracked files and propose one commit message
+5. A decision the requirements do not cover: ask when you can; otherwise choose the most conservative option and label it "assumption"
 
 ## Public repository
 
@@ -28,7 +27,19 @@ This repo is public under MIT. Never commit:
 - `pnpm lint`: Biome lint
 - `pnpm lint:fix`: Biome auto-fix + format
 
+## Commits
+
+1. Subject: `<type>: #<issue> <subject>`. Example: `feat: #12 add the bandwidth calculator`. Use `#0` when there is no issue, and prefer opening an issue
+2. Types: `feat` `fix` `refactor` `chore` `perf` `docs` `style` `test` `build` `ci` `revert`. Optional `(scope)` and `!` for breaking changes
+3. Subject in imperative English, at most 72 characters (`add X`, not `added X`)
+4. Body: zero to three short lines about why and non-obvious details, separated from the subject by a blank line. No file lists, no testing notes. Needing more lines means the commit should be split
+5. No trailers (no `Co-Authored-By` and the like)
+6. Rules 1 to 5 are enforced by `.githooks/commit-msg` (installed by `pnpm install` through `core.hooksPath`; tests in `.githooks/commit-msg.test.ts`). Merge, revert, `fixup!` and `squash!` messages pass automatically. `git commit --no-verify` is for emergencies only
+7. Before proposing a commit run `pnpm lint && pnpm test && pnpm build`. CI runs the same on every push to `main` and every pull request
+
 ## Code style
+
+Code, identifiers, file names, commit messages, code comments and developer docs are English.
 
 Formatting is Biome's job (single quotes, semicolons, indent 2, line width 140); do not restate config defaults.
 
